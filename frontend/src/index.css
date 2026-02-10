@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* |--------------------------------------------------------------------------
+| CUSTOM STYLES ADDED TO MATCH HTML LAYOUT
+|--------------------------------------------------------------------------
+*/
+
+/* 1. Sets the Material Symbols icon weight and optical size */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* 2. Sparkle Animation Styles */
+.sparkle {
+    animation: sparkle 1.5s infinite;
+    opacity: 0;
+    /* Uses the dark-green color defined in your tailwind.config */
+    color: #004d40; 
+}
+.sparkle:nth-child(2) { animation-delay: 0.3s; }
+.sparkle:nth-child(3) { animation-delay: 0.6s; }
+@keyframes sparkle {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: scale(1.5) rotate(360deg); opacity: 0; }
+}

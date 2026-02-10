@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ECHOBOT AI Learning Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+<style>
+  body {
+    min-height: max(884px, 100dvh);
+  }
+</style>
+
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#9a5de5",
+          "background-light": "#f7f6f8",
+          "background-dark": "#181220",
+          "cream": "#F9F8F1",
+          "dark-green": "#004d40",
+        },
+        fontFamily: {
+          "display": ["Lexend", "sans-serif"]
+        },
+        borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+      },
+    },
+  }
+</script>
+
+</head>
+<body class="font-display">
+<div class="relative flex min-h-screen w-full flex-col bg-cream">
+
+<header class="flex-shrink-0 pt-16 px-6 text-center">
+  <div class="space-y-2">
+    <div class="relative inline-block">
+      <h1 class="text-4xl font-bold tracking-tight text-dark-green md:text-5xl">
+        Welcome to ECHOBOT
+      </h1>
+    </div>
+    <p class="text-gray-500">Your AI-powered learning partner.</p>
+  </div>
+</header>
+
+<main class="flex flex-1 flex-col items-center justify-center p-6">
+  <div class="w-full max-w-md space-y-8 text-center">
+    <div class="flex justify-center px-4 -mt-8 mb-4">
+      <svg class="w-48 h-48" fill="none" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g opacity="0.9">
+          <circle cx="100" cy="100" r="80" stroke="#004d40" stroke-dasharray="10 10"
+            stroke-linecap="round" stroke-width="6">
+            <animateTransform attributeName="transform" dur="20s" from="0 100 100"
+              repeatCount="indefinite" to="360 100 100" type="rotate"></animateTransform>
+          </circle>
+          <circle cx="100" cy="100" fill="#004d40" fill-opacity="0.1" r="60"></circle>
+          <path d="M100 70C116.569 70 130 83.4315 130 100C130 116.569 116.569 130 100 130C83.4315 130 70 116.569 70 100C70 83.4315 83.4315 70 100 70Z"
+            stroke="#004d40" stroke-width="4"></path>
+          <circle cx="100" cy="100" fill="#004d40" r="8"></circle>
+          <path d="M100 40L100 50" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+          <path d="M100 150L100 160" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+          <path d="M160 100L150 100" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+          <path d="M50 100L40 100" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+          <path d="M142.426 57.5736L135.355 64.6447" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+          <path d="M64.6447 135.355L57.5736 142.426" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+          <path d="M142.426 142.426L135.355 135.355" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+          <path d="M64.6447 64.6447L57.5736 57.5736" stroke="#004d40" stroke-linecap="round" stroke-width="3"></path>
+        </g>
+      </svg>
+    </div>
+
+    <div class="space-y-6">
+      <h2 class="text-xl font-bold leading-tight tracking-tight text-dark-green">Choose Your Portal</h2>
+
+      <div class="flex flex-col gap-6">
+          <a href="teacherlogin.html" class="block">
+        <div class="flex flex-col cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-dark-green p-6 text-base font-bold leading-normal text-cream shadow-lg transition-transform duration-300 hover:scale-105">
+          <span class="material-symbols-outlined text-7xl mb-3 text-white/80">school</span>
+          <span class="truncate text-lg">Teacher Portal</span>
+        </div>
+</a>
+          <a href="studentlogin.html" class="block">
+        <div class="flex flex-col cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dark-green bg-cream p-6 text-base font-bold leading-normal text-dark-green shadow-lg transition-transform duration-300 hover:scale-105">
+          <span class="material-symbols-outlined text-7xl mb-3 text-dark-green/80">book_2</span>
+          <span class="truncate text-lg">Student Portal</span>
+        </div>
+              </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+</div>
+</body>
+</html>

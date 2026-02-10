@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="student-data.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+<style>
+body { font-family:"Lexend"; background:#F5F5F1; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.95); }
+}
+.animate-pulse {
+  animation: pulse 1s infinite;
+}
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #F5F5F1;
+  font-family: 'Lexend', sans-serif;
+}
+@media (min-width: 768px) {
+  .progress-section {
+    justify-content: space-around;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+<div class="min-h-screen w-full bg-cream flex flex-col">
+
+<header class="p-4 flex items-center justify-between">
+<span class="material-symbols-outlined text-dark-green">person</span>
+<h2 id="studentName" class="text-dark-green text-xl font-bold"></h2>
+<div class="flex items-center bg-yellow-200 px-3 py-1 rounded-full gap-1">
+<span class="material-symbols-outlined text-yellow-500" style="font-variation-settings:'FILL' 1;">star</span>
+<p id="topStars" class="font-bold text-yellow-600"></p>
+</div>
+</header>
+
+<main class="flex flex-col gap-6 px-6 lg:px-16 pb-28">
+<h1 class="text-dark-green text-2xl font-bold">Keep up the great work, <span id="studentName2"></span>!</h1>
+
+<!-- Progress Overview (Equal Horizontal Layout) -->
+<div class="bg-white p-6 rounded-xl shadow flex flex-col gap-6 items-center justify-center">
+  <div class="flex flex-col lg:flex-row justify-between items-center gap-8 w-full lg:w-[80%] mx-auto">
+
+    <!-- ✅ Completed -->
+    <div class="flex flex-col items-center justify-center text-center flex-1">
+      <div class="flex items-center justify-center bg-accent-green/10 h-20 w-20 rounded-full mb-2">
+        <span class="material-symbols-outlined text-accent-green text-4xl">task_alt</span>
+      </div>
+      <p id="completedCount" class="text-2xl font-bold text-dark-green">0</p>
+      <p class="text-sm text-dark-green/70">Completed</p>
+    </div>
+
+    <!-- 🟢 Progress Circle -->
+    <div class="flex flex-col items-center justify-center text-center flex-1">
+      <div class="relative flex items-center justify-center">
+        <svg class="h-24 w-24 -rotate-90">
+          <circle cx="48" cy="48" r="42" stroke="#E3E3E3" stroke-width="10" fill="none"></circle>
+          <circle id="progressStroke" cx="48" cy="48" r="42" stroke="#3D8C62" stroke-width="10" fill="none" stroke-linecap="round"
+            stroke-dasharray="264" stroke-dashoffset="264" style="transition: stroke-dashoffset 1s ease-out;"></circle>
+        </svg>
+      </div>
+      <p id="progressValue" class="text-2xl font-bold text-dark-green mt-2">0%</p>
+      <p class="text-sm text-dark-green/70">Complete</p>
+    </div>
+
+    <!-- ⏳ Pending -->
+    <div class="flex flex-col items-center justify-center text-center flex-1">
+      <div class="flex items-center justify-center bg-yellow-200/30 h-20 w-20 rounded-full mb-2">
+        <span class="material-symbols-outlined text-yellow-600 text-4xl">hourglass_top</span>
+      </div>
+      <p id="pendingCount" class="text-2xl font-bold text-dark-green">0</p>
+      <p class="text-sm text-dark-green/70">Pending</p>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Task List -->
+<div class="bg-white p-6 rounded-xl shadow flex flex-col gap-4">
+  <h2 class="text-xl font-bold text-dark-green">Your Tasks</h2>
+  <div id="taskList" class="flex flex-col gap-3"></div>
+</div>
+
+</main>
+
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg w-full">
+<div class="max-w-md mx-auto flex justify-around py-3">
+<a class="flex flex-col items-center text-dark-green" href="student_dashboard.html">
+<span class="material-symbols-outlined fill-1">home</span><p class="text-xs font-semibold">Home</p>
+</a>
+<a class="flex flex-col items-center text-gray-400" href="AIAssistance.html">
+<span class="material-symbols-outlined">school</span><p class="text-xs">Learn</p>
+</a>
+<a class="flex flex-col items-center text-gray-400" href="star.html">
+<span class="material-symbols-outlined">star</span><p class="text-xs">Stars</p>
+</a>
+</div>
+</nav>
+
+</div>
+
+<script>
+async function loadDashboard() {
+  const email = localStorage.getItem('userEmail');
+  if (!email) {
+    alert("Please login first!");
+    window.location.href = "studentlogin.html";
+    return;
+  }
+
+  try {
+    // Fetch latest student info
+    const profileRes = await fetch(`http://localhost:5000/api/student/${email}`);
+    const profile = await profileRes.json();
+
+    // Fill student info in dashboard
+    document.getElementById("studentName").textContent = profile.name || "Student";
+    document.getElementById("studentName2").textContent = profile.name || "Student";
+    document.getElementById("topStars").textContent = profile.totalStars || 0;
+    document.getElementById("completedCount").textContent = profile.completedTasks || 0;
+    document.getElementById("pendingCount").textContent = profile.pendingTasks || 0;
+    // Animate circular progress + counting number
+const progressValue = document.getElementById("progressValue");
+const progressStroke = document.getElementById("progressStroke");
+const targetProgress = profile.progress || 0;
+let currentProgress = 0;
+
+const animationDuration = 1000; // 1 second
+const frameRate = 16; // ms per frame (~60fps)
+const totalFrames = animationDuration / frameRate;
+let frame = 0;
+
+const animateProgress = setInterval(() => {
+  frame++;
+  currentProgress = Math.min((frame / totalFrames) * targetProgress, targetProgress);
+  const dashOffset = 339 - (339 * currentProgress) / 100;
+
+  progressValue.textContent = Math.round(currentProgress) + "%";
+  progressStroke.style.strokeDashoffset = dashOffset;
+
+  if (frame >= totalFrames) clearInterval(animateProgress);
+}, frameRate);
+
+    // Fetch student's tasks
+    const taskRes = await fetch(`http://localhost:5000/api/tasks/${email}`);
+    const tasks = await taskRes.json();
+
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
+
+    if (!tasks || tasks.length === 0) {
+      taskList.innerHTML = `<p class="text-gray-500 text-center">No tasks yet. Ask Echobot for learning ideas!</p>`;
+      return;
+    }
+
+    // Render task list
+    tasks.forEach(task => {
+      const taskCard = document.createElement("div");
+      taskCard.className = "flex items-center justify-between bg-gray-100 p-3 rounded-lg";
+      taskCard.innerHTML = `
+  <div>
+    <p class="font-medium text-dark-green">${task.task_text}</p>
+    <p class="text-sm text-gray-500">${task.level}</p>
+  </div>
+  ${
+    task.status === "Completed"
+      ? `<span class="material-symbols-outlined text-green-600">check_circle</span>`
+      : `<button onclick="markCompleted('${task.id}')" class="bg-green-500 text-white text-sm px-3 py-1 rounded-full">Mark Completed</button>`
+  }
+`;
+      taskList.appendChild(taskCard);
+    });
+  } catch (err) {
+    console.error("Dashboard error:", err);
+    alert("⚠️ Unable to load dashboard data.");
+  }
+}
+
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("mark-btn")) {
+    const taskId = e.target.getAttribute("data-taskid");
+    const email = e.target.getAttribute("data-email");
+    markCompleted(taskId, email, e.target);
+  }
+});
+// ✅ Mark a task as completed (with animation)
+async function markCompleted(taskId) {
+  const email = localStorage.getItem("userEmail"); // ✅ get from localStorage
+  if (!email) {
+    alert("No email found. Please login again!");
+    window.location.href = "studentlogin.html";
+    return;
+  }
+
+  // find the clicked button and make it blink
+  const button = event.target;
+  button.disabled = true;
+  button.textContent = "Updating...";
+  button.classList.add("animate-pulse");
+
+  try {
+    const res = await fetch("http://localhost:5000/api/tasks/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskId, email }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      button.classList.remove("animate-pulse");
+      button.textContent = "✅ Done";
+      button.classList.add("bg-green-700");
+      alert("Task marked as completed! 🌟 +10 stars earned!");
+
+      // Update UI live
+      document.getElementById("topStars").textContent = data.stars;
+      document.getElementById("completedCount").textContent = data.completedTasks;
+      document.getElementById("pendingCount").textContent = data.pendingTasks;
+      document.getElementById("progressValue").textContent = data.progress + "%";
+
+      const dashOffset = 339 - (339 * data.progress) / 100;
+      document.getElementById("progressStroke").style.strokeDashoffset = dashOffset;
+    } else {
+      alert(data.error || "Failed to complete task.");
+      button.disabled = false;
+      button.textContent = "Mark Completed";
+      button.classList.remove("animate-pulse");
+    }
+  } catch (err) {
+    console.error("Completion error:", err);
+    alert("⚠️ Network issue while marking task completed.");
+    button.disabled = false;
+    button.textContent = "Mark Completed";
+    button.classList.remove("animate-pulse");
+  }
+}
+
+// Run dashboard on load
+loadDashboard();
+
+
+</script>
+
+</body>
+</html>

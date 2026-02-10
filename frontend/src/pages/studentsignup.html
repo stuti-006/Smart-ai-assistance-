@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Sign Up</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+
+<style>
+body { background:#FAF8F1; font-family:'Lexend'; }
+#cameraBox { display:none; }
+video { width:100%; border-radius:12px; }
+</style>
+</head>
+
+<body class="p-4">
+<div class="flex flex-col items-center">
+
+<h2 class="text-3xl font-bold text-[#1E392A] mt-4">ECHOBOT</h2>
+<h1 class="text-[28px] font-bold text-[#1E392A] mt-4 mb-4">Create Your Account</h1>
+
+<!-- Student Email -->
+<input id="studentEmail" class="w-full max-w-md bg-gray-200 p-4 rounded-xl mb-4"
+ placeholder="Enter your school email">
+
+<!-- DOB as Password -->
+<input id="studentDOB" class="w-full max-w-md bg-gray-200 p-4 rounded-xl mb-6"
+ placeholder="MM/DD/YYYY" type="password">
+
+<button onclick="signUpStudent()" class="w-full max-w-md bg-[#1E392A] text-white p-4 font-bold rounded-xl">
+  Sign Up
+</button>
+
+</div>
+
+<!-- 📌 Camera Popup -->
+<div id="cameraBox" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+  <div class="bg-white p-4 rounded-xl max-w-md w-full space-y-3">
+    <video id="camera" autoplay></video>
+    <button onclick="closeCamera()" class="w-full bg-red-600 text-white p-3 rounded-lg font-bold">Close Camera</button>
+  </div>
+</div>
+
+<script>
+let stream;
+
+function openCamera() {
+  document.getElementById("cameraBox").style.display = "flex";
+  navigator.mediaDevices.getUserMedia({ video:true })
+  .then((s) => {
+    stream = s;
+    document.getElementById("camera").srcObject = s;
+  })
+  .catch(() => alert("Camera permission denied"));
+}
+
+function closeCamera() {
+  document.getElementById("cameraBox").style.display = "none";
+  if (stream) stream.getTracks().forEach(track => track.stop());
+}
+
+function signUpStudent() {
+  const email = studentEmail.value.trim();
+  const dob = studentDOB.value.trim();
+  if(!email || !dob) { alert("Please fill all fields"); return; }
+  localStorage.setItem("studentEmail", email);
+  localStorage.setItem("studentDOB", dob);
+  window.location.href = "student_dashboard.html";
+}
+</script>
+<script src="studentsignup.js"></script>
+</body>
+</html>

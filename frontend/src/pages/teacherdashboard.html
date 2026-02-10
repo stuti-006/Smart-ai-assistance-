@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Teacher Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+<style>
+/* Base Styles & Custom Variables */
+body { font-family: "Lexend"; background: #f9fafb; }
+.profile-circle {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: #065f46; /* Darker Emerald */
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 600;
+}
+
+/* Pie Chart Styles */
+.pie {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  background: conic-gradient(#059669 0deg, #e5e7eb 0deg);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 0 4px white;
+}
+.pie-inner {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Custom shadow for cards */
+.card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+</style>
+</head>
+
+<body class="bg-gray-50">
+<div class="flex flex-col min-h-screen">
+
+  <div class="p-4 sm:px-6 md:px-8 pb-4 flex items-center justify-between bg-white border-b border-gray-100">
+    <div>
+      <div class="flex items-center gap-3 mb-1">
+        <div id="profileAvatar" class="profile-circle">T</div>
+        <p class="text-xl font-medium text-gray-500">Teacher Dashboard</p>
+      </div>
+      <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">
+        Welcome, <span class="welcome-name font-black"></span>!
+      </h1>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 p-4 sm:px-6 md:px-8">
+    
+    <div class="bg-white rounded-xl p-5 card-shadow flex justify-between items-center transition duration-300 hover:shadow-lg border-t-4 border-emerald-500">
+      <div>
+        <p class="text-sm font-medium text-gray-500">Overall Class Score</p>
+        <p id="overallScore" class="text-4xl font-extrabold text-emerald-600 mt-1">0%</p>
+        <p class="text-xs text-gray-400 mt-1">Average completion rate</p>
+      </div>
+      <div id="pieOverall" class="pie">
+        <div class="pie-inner">0%</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 card-shadow flex justify-between items-center transition duration-300 hover:shadow-lg border-t-4 border-sky-500">
+      <div>
+        <p class="text-sm font-medium text-gray-500">Total Students</p>
+        <p id="totalStudents" class="text-4xl font-extrabold text-sky-600 mt-1">0</p>
+        <p class="text-xs text-gray-400 mt-1">Active learners</p>
+      </div>
+      <div id="pieStudents" class="pie" style="background: conic-gradient(#0ea5e9 0deg, #e5e7eb 0deg);">
+        <div class="pie-inner">0</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 card-shadow flex justify-between items-center transition duration-300 hover:shadow-lg border-t-4 border-lime-500">
+      <div>
+        <p class="text-sm font-medium text-gray-500">Tasks Completed</p>
+        <p id="completedTasks" class="text-4xl font-extrabold text-lime-600 mt-1">0</p>
+        <p class="text-xs text-gray-400 mt-1">Across all students</p>
+      </div>
+      <div id="pieCompleted" class="pie" style="background: conic-gradient(#84cc16 0deg, #e5e7eb 0deg);">
+        <div class="pie-inner">0</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 card-shadow flex justify-between items-center transition duration-300 hover:shadow-lg border-t-4 border-amber-500">
+      <div>
+        <p class="text-sm font-medium text-gray-500">Pending Tasks</p>
+        <p id="pendingTasks" class="text-4xl font-extrabold text-amber-600 mt-1">0</p>
+        <p class="text-xs text-gray-400 mt-1">Need attention</p>
+      </div>
+      <div id="piePending" class="pie" style="background: conic-gradient(#f59e0b 0deg, #e5e7eb 0deg);">
+        <div class="pie-inner">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 sm:px-6 md:px-8 pt-0">
+    <div class="grid grid-cols-1 gap-5"> 
+      <div class="bg-white p-5 rounded-xl card-shadow flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-lg font-bold text-gray-900">Today's Attendance</p>
+            <p id="attendanceStatus" class="mt-1 text-sm text-gray-500">Checking status...</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
+            <span class="material-symbols-outlined text-2xl text-emerald-700">task_alt</span>
+          </div>
+        </div>
+        <label class="mt-4 inline-flex items-center gap-3 text-base font-medium text-gray-700 cursor-pointer">
+          <input id="attendanceCheckbox" type="checkbox"
+                 class="h-5 w-5 rounded-md border-gray-300 text-emerald-600 focus:ring-emerald-500 transition duration-150 ease-in-out">
+          Mark Myself Present
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 sm:px-6 md:px-8 py-6">
+    <h3 class="pb-3 text-2xl font-bold text-gray-900 border-b border-gray-200 mb-4">
+        <span class="material-symbols-outlined align-middle mr-2 text-emerald-600">group</span>
+        Students Progress
+    </h3>
+
+    <div id="studentsContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <p class="text-gray-600">Loading dashboard...</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---------- SUPABASE CONFIGURATION ----------
+const SUPABASE_URL = "https://biwgbzpsywfhttftkmnl.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpd2dienBzeXdmaHR0ZnRrbW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5MjQwNDUsImV4cCI6MjA3OTUwMDA0NX0.DmFSsdMmWJL3kBtuFichOEuSt1T7l4eRO2fUruUNQAw";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ---------- HEADER SETUP ----------
+const teacherName = localStorage.getItem("name") || "Teacher";
+document.querySelector(".welcome-name").textContent = teacherName;
+document.getElementById("profileAvatar").textContent = teacherName.charAt(0).toUpperCase();
+
+// ---------- PIE HELPER ----------
+function setPie(id, percent, label, color) {
+  const pie = document.getElementById(id);
+  const inner = pie.querySelector(".pie-inner");
+  const p = Math.max(0, Math.min(100, percent));
+  const angle = p * 3.6;
+  const col = color || "#059669"; 
+  
+  pie.style.background = `conic-gradient(${col} 0deg ${angle}deg, #e5e7eb ${angle}deg 360deg)`;
+  inner.textContent = label;
+}
+
+// --- ATTENDANCE LOGIC (UPDATED to use 'teachers' table) ---
+const attendanceCheckbox = document.getElementById("attendanceCheckbox");
+const attendanceStatus = document.getElementById("attendanceStatus");
+const teacherEmail = localStorage.getItem("teacherEmail") || "teacher@example.com";
+
+// Helper to get today's date string in YYYY-MM-DD format
+const getTodayDate = () => new Date().toISOString().slice(0, 10);
+
+/**
+ * Checks the teacher's last_attendance_date on load and sets the checkbox state.
+ */
+async function checkInitialAttendance() {
+    const today = getTodayDate();
+    attendanceStatus.textContent = "Checking status..."; 
+
+    const { data: teacher, error } = await supabaseClient
+        .from("teachers")
+        .select("present_today")
+        .eq("email", teacherEmail)
+        .single();
+
+    if (error) {
+        // Logging error but providing a simple status message for the user
+        console.error("Error fetching teacher attendance:", error); 
+        attendanceStatus.textContent = "Unable to verify attendance status.";
+        return;
+    }
+
+    if (teacher && teacher.present_today === today) {
+        attendanceCheckbox.checked = true;
+        attendanceStatus.textContent = "Marked present for today.";
+    } else {
+        attendanceCheckbox.checked = false;
+        attendanceStatus.textContent = "Please mark your attendance.";
+    }
+}
+
+/**
+ * Saves the attendance status by updating the last_attendance_date in the teachers table.
+ */
+attendanceCheckbox.addEventListener("change", async () => {
+    const today = getTodayDate();
+    const isChecked = attendanceCheckbox.checked;
+    attendanceStatus.textContent = "Saving...";
+
+    // If checked, save today's date. If unchecked, save NULL.
+    const newDate = isChecked ? today : null;
+
+    const { error } = await supabaseClient
+        .from("teachers")
+        .update({ present_today: newDate })
+        .eq("email", teacherEmail);
+
+    if (error) {
+        console.error("Error saving attendance:", error);
+        attendanceStatus.textContent = "Attendance marked successfully!";
+        // Revert checkbox state if saving fails
+        attendanceCheckbox.checked = !isChecked; 
+    } else {
+        attendanceStatus.textContent = isChecked
+            ? "Marked present for today."
+            : "Marked absent for today.";
+    }
+});
+// --- END ATTENDANCE LOGIC ---
+
+// ---------- DASHBOARD LOADING LOGIC ----------
+async function loadDashboard() {
+  const container = document.getElementById("studentsContainer");
+
+  const { data: students, error: studentError } = await supabaseClient
+    .from("students")
+    .select("email, name, total_stars");
+
+  if (studentError) {
+    console.error(studentError);
+    container.innerHTML = '<p class="text-red-600">Error fetching students.</p>';
+    checkInitialAttendance();
+    return;
+  }
+
+  const { data: tasks, error: taskError } = await supabaseClient
+    .from("tasks")
+    .select("student_email, status, interest, created_at");
+
+  if (taskError) {
+    console.error(taskError);
+    container.innerHTML = '<p class="text-red-600">Error fetching tasks.</p>';
+    checkInitialAttendance();
+    return;
+  }
+
+  const byEmail = {};
+  students.forEach(s => {
+    byEmail[s.email] = {
+      email: s.email,
+      name: s.name || s.email.split("@")[0],
+      stars: s.total_stars || 0,
+      completed: 0,
+      pending: 0,
+      lastInterest: null
+    };
+  });
+
+  tasks
+    .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
+    .forEach(t => {
+      const s = byEmail[t.student_email];
+      if (!s) return;
+      if (t.status === "Completed") s.completed++;
+      else if (t.status === "Pending") s.pending++;
+      if (!s.lastInterest) s.lastInterest = t.interest;
+    });
+
+  const list = Object.values(byEmail);
+  if (!list.length) {
+    container.innerHTML = '<p class="text-gray-500">No students yet.</p>';
+    setPie("pieOverall",0,"0%","#22c55e");
+    setPie("pieStudents",0,"0","#0ea5e9");
+    setPie("pieCompleted",0,"0","#65a30d");
+    setPie("piePending",0,"0","#f59e0b");
+    checkInitialAttendance();
+    return;
+  }
+
+  let totalCompleted = 0, totalPending = 0, sumProgress = 0;
+  list.forEach(s => {
+    const total = s.completed + s.pending;
+    const progress = total ? Math.round((s.completed / total) * 100) : 0;
+    s.progress = progress;
+    totalCompleted += s.completed;
+    totalPending += s.pending;
+    sumProgress += progress;
+  });
+
+  const avgProgress = Math.round(sumProgress / list.length);
+  const totalTasks = totalCompleted + totalPending;
+
+  document.getElementById("overallScore").textContent = avgProgress + "%";
+  document.getElementById("totalStudents").textContent = list.length;
+  document.getElementById("completedTasks").textContent = totalCompleted;
+  document.getElementById("pendingTasks").textContent = totalPending;
+
+  const completedPercent = totalTasks ? Math.round((totalCompleted / totalTasks) * 100) : 0;
+  const pendingPercent = totalTasks ? Math.round((totalPending / totalTasks) * 100) : 0;
+
+  // set pies with new styles/colors
+  setPie("pieOverall", avgProgress, avgProgress + "%", "#22c55e");
+  setPie("pieStudents",
+         Math.min(list.length / 40 * 100, 100),
+         String(list.length),
+         "#0ea5e9");
+  setPie("pieCompleted", completedPercent, String(totalCompleted), "#84cc16");
+  setPie("piePending", pendingPercent, String(totalPending), "#f59e0b");
+
+  // per-student cards (IMPROVED MARKUP)
+  container.innerHTML = "";
+  list.sort((a,b) => b.progress - a.progress).forEach(s => {
+    const barColor =
+      s.progress >= 70 ? "bg-emerald-500" :
+      s.progress >= 40 ? "bg-amber-400" :
+                         "bg-red-500";
+    
+    const progressTextColor =
+      s.progress >= 70 ? "text-emerald-600" :
+      s.progress >= 40 ? "text-amber-500" :
+                             "text-red-600";
+                             
+    const card = document.createElement("div");
+    card.className = "bg-white rounded-xl card-shadow p-4 border-l-4 border-gray-100 hover:border-emerald-400 transition-all duration-300";
+
+    card.innerHTML = `
+      <div class="flex justify-between items-center mb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-50 border-2 border-emerald-200 flex items-center justify-center text-emerald-700 text-base font-bold flex-shrink-0">
+            ${s.name.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p class="font-bold text-gray-900 truncate">${s.name}</p>
+            <p class="text-xs text-gray-500 mt-0.5">
+              <span class="font-semibold text-amber-500">★ ${s.stars}</span> 
+              &bull; ${s.completed} completed 
+              &bull; ${s.pending} pending
+            </p>
+          </div>
+        </div>
+        <p class="text-xl font-extrabold ${progressTextColor} flex-shrink-0">
+          ${s.progress}%
+        </p>
+      </div>
+      <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-1">
+        <div class="h-full ${barColor} transition-all duration-500 ease-out" style="width:${s.progress}%;"></div>
+      </div>
+      <p class="mt-2 text-xs text-gray-400 font-medium">
+        Latest interest: <span class="font-semibold text-gray-600">${s.lastInterest || "Not started"}</span>
+      </p>
+    `;
+    container.appendChild(card);
+  });
+  
+  checkInitialAttendance();
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Echobot Mentor – AI Learning Assistant</title>
+
+  <!-- Tailwind + Fonts -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#256f4e",
+            "secondary": "#e0f5ea",
+            "background-light": "#FAF8F1",
+            "background-dark": "#11251d",
+          },
+          fontFamily: {
+            display: ["Lexend", "sans-serif"]
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Lexend', sans-serif;
+      background: var(--tw-bg-opacity) 1;
+      min-height: 100vh;
+    }
+
+    /* Smooth fade-in animation for messages */
+    .fade-in {
+      animation: fadeIn 0.4s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #256f4e77;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body class="font-display bg-background-light dark:bg-background-dark flex flex-col min-h-screen transition-all duration-300">
+
+  <!-- 🌟 HEADER -->
+  <header class="sticky top-0 z-10 flex items-center justify-between bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-sm border-b border-primary/10 px-5 py-3">
+    <h1 class="text-[#1E392A] dark:text-white text-2xl font-semibold">Hello, Scholar!</h1>
+    <div class="flex items-center justify-center gap-1 rounded-full bg-yellow-400/20 px-3 py-1.5">
+      <span class="material-symbols-outlined text-yellow-400 text-lg">star</span>
+      <p class="text-yellow-400 text-base font-bold">1,250</p>
+    </div>
+  </header>
+
+  <!-- 💬 CHAT AREA -->
+  <main id="chat-area" class="flex-1 flex flex-col gap-4 p-5 overflow-y-auto scroll-smooth">
+    <!-- Bot Welcome Message -->
+    <div class="flex items-start gap-3 fade-in">
+      <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0" 
+           style='background-image: url("https://cdn-icons-png.flaticon.com/512/4712/4712102.png");'></div>
+      <div class="flex flex-col gap-1 items-start">
+        <p class="text-zinc-500 text-[13px]">Echobot Mentor</p>
+        <div class="bg-secondary dark:bg-zinc-800 text-[#1E392A] dark:text-white rounded-2xl rounded-bl-sm px-5 py-3 shadow-sm max-w-[90%] text-[15px] leading-relaxed">
+          👋 Hi! I’m your AI mentor. Tell me what you’re interested in — like <b>AI</b>, <b>Web Dev</b>, or <b>Cybersecurity</b> — and I’ll suggest practical tasks to get you learning!
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ✏️ INPUT AREA -->
+  <div class="sticky bottom-14 md:bottom-16 bg-background-light/90 dark:bg-background-dark/90 p-4 backdrop-blur-sm border-t border-primary/10">
+    <div class="flex items-center gap-2 rounded-2xl bg-white dark:bg-zinc-900/60 shadow-md p-2">
+      <input id="user-input" 
+             class="flex-1 bg-transparent text-zinc-900 dark:text-white placeholder:text-zinc-500 focus:ring-0 border-0 text-[15px] py-2 px-3 outline-none"
+             placeholder="Type your interest..." type="text" />
+      <button id="send-btn" class="flex items-center justify-center size-10 rounded-xl bg-primary hover:bg-[#1c5a3f] transition text-white shrink-0">
+        <span class="material-symbols-outlined">arrow_upward</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 📱 NAVIGATION -->
+  <nav class="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-white dark:bg-zinc-900 p-3 shadow-inner border-t border-zinc-200 dark:border-zinc-800">
+    <button class="flex flex-col items-center text-zinc-500 hover:text-primary transition" onclick="window.location.href='student_dashboard.html'">
+      <span class="material-symbols-outlined">home</span>
+      <p class="text-xs font-medium">Home</p>
+    </button>
+    <button class="flex flex-col items-center text-primary">
+      <span class="material-symbols-outlined">school</span>
+      <p class="text-xs font-semibold">Learn</p>
+    </button>
+    <button class="flex flex-col items-center text-zinc-500 hover:text-primary transition" onclick="window.location.href='star.html'">
+      <span class="material-symbols-outlined">star</span>
+      <p class="text-xs font-medium">Stars</p>
+    </button>
+  </nav>
+
+  <!-- =========================== -->
+  <!-- 💬 CHAT FUNCTIONALITY SCRIPT -->
+  <!-- =========================== -->
+  <script>
+    const chatArea = document.getElementById("chat-area");
+    const input = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+
+      // Add user message (with smooth entry)
+      const userMsg = document.createElement("div");
+      userMsg.className = "flex items-end gap-3 justify-end fade-in";
+      userMsg.innerHTML = `
+        <div class="flex flex-col gap-1 items-end">
+          <p class="text-zinc-500 text-[13px] text-right">You</p>
+          <div class="bg-primary text-white text-[15px] leading-relaxed px-5 py-3 rounded-2xl rounded-br-sm shadow-md max-w-[90%]">${message}</div>
+        </div>`;
+      chatArea.appendChild(userMsg);
+      input.value = "";
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      // Call backend
+      try {
+        const loggedInEmail = localStorage.getItem("userEmail");
+        const response = await fetch("http://localhost:5000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, email: loggedInEmail })
+        });
+        const data = await response.json();
+
+        // Bot message with typing delay
+        const botContainer = document.createElement("div");
+        botContainer.className = "flex items-start gap-3 fade-in";
+        botContainer.innerHTML = `
+          <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0" 
+               style='background-image: url("https://cdn-icons-png.flaticon.com/512/4712/4712102.png");'></div>
+          <div class="flex flex-col gap-1 items-start">
+            <p class="text-zinc-500 text-[13px]">Echobot Mentor</p>
+            <div class="bg-secondary dark:bg-zinc-800 text-[#1E392A] dark:text-white rounded-2xl rounded-bl-sm px-5 py-3 shadow-sm max-w-[90%] text-[15px] leading-relaxed whitespace-pre-line">
+              ${data.reply || "Hmm... I couldn’t come up with tasks right now."}
+            </div>
+          </div>`;
+        chatArea.appendChild(botContainer);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      } catch (err) {
+        console.error("Error:", err);
+        alert("⚠️ Unable to connect to backend. Make sure the server is running.");
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
