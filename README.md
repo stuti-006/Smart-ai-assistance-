@@ -1,6 +1,6 @@
 EchoBot 
 
-EchoBot Mentor is a full-stack educational web application designed to facilitate student-teacher interactions, track attendance via QR codes, manage tasks, and provide an AI-powered conversational mentor for students. The AI mentor can assist seamlessly across various domains, including academics, music, sports, creative arts, and personal growth.
+EchoBot is a full-stack educational web application designed to facilitate student-teacher interactions, track attendance via QR codes, manage tasks, and provide an AI-powered conversational mentor for students. The AI mentor can assist seamlessly across various domains, including academics, music, sports, creative arts, and personal growth.
 
 ## Features
 - **Student & Teacher Portals**: Dedicated signup and login flows using Supabase Authentication.
